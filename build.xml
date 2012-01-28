@@ -1,0 +1,76 @@
+<project name='translator' default='dist' basedir='.'>
+  <description>Build the grammar translator </description>
+
+  <property environment='env'/>
+  <property name='jg' location='/home/cby1990/silver/generated/'/>
+  <property name='sh' location='/home/cby1990/silver/'/>
+  <property name='bin' location='${jg}/bin'/>
+  <property name='src' location='${jg}/src'/>
+
+  <path id='lib.classpath'>
+    <fileset dir='${sh}/jars' includes='SilverRuntime.jar CopperRuntime.jar CopperCompiler.jar' />
+  </path>
+
+  <path id='src.classpath'>
+    <pathelement location='${src}' />
+  </path>
+
+  <path id='compile.classpath'>
+    <path refid='src.classpath'/>
+    <path refid='lib.classpath'/>
+  </path>
+
+  <taskdef name='copper' classname='edu.umn.cs.melt.copper.ant.CopperAntTask' classpathref='lib.classpath'/>
+
+
+  <target name='init'>
+
+    <!-- Create the time stamp -->
+    <tstamp>
+      <format property='TIME' pattern='MM/dd/yyyy hh:mm aa'/>
+    </tstamp>
+
+    <mkdir dir='${bin}'/>
+  </target>
+
+  <target name='dist' depends='grammars'>
+
+    <pathconvert refid='lib.classpath' pathsep=' ' property='man.classpath' />
+    <jar destfile='translator.jar' basedir='${bin}'>
+       <include name='translator/*.class' />
+       <include name='core/*.class' />
+       <include name='silver/langutil/*.class' />
+       <include name='silver/langutil/pp/*.class' />
+       <include name='silver/util/deque/*.class' />
+       <include name='AST/*.class' />
+       <include name='wtfParser/*.class' />
+       <include name='scanner/*.class' />
+      <manifest>
+       <attribute name='Main-Class' value='translator.Main' />
+       <attribute name='Class-Path' value='${man.classpath}' />
+       <attribute name='Built-By' value='${user.name}' />
+       <attribute name='Implementation-Version' value='${TIME}' />
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name='grammars' depends='init, copper'>
+      <javac debug='on' classpathref='compile.classpath' srcdir='${src}' destdir='${bin}' includeantruntime='false'>
+       <include name='translator/*.java' />
+       <include name='core/*.java' />
+       <include name='silver/langutil/*.java' />
+       <include name='silver/langutil/pp/*.java' />
+       <include name='silver/util/deque/*.java' />
+       <include name='AST/*.java' />
+       <include name='wtfParser/*.java' />
+       <include name='scanner/*.java' />
+      </javac>
+  </target>
+
+  <target name='copper'>
+    <copper fullClassName='translator.Parser_translator_parse' inputFile='${src}/translator/Parser_translator_parse.copper' outputFile='${src}/translator/Parser_translator_parse.java' skin='OLD_XML' warnUselessNTs='no' dump='true' dumpType='HTML' dumpOnlyOnError='true' dumpFile='Parser_translator_parse.copperdump.html'/>
+  </target>
+
+
+</project>

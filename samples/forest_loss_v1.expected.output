@@ -1,0 +1,461 @@
+varName "main"
+leftParen
+rightParen
+leftCurly
+integerKwd
+varName "rows"
+semiColon
+varName "rows"
+equals
+integerConst "100"
+semiColon
+integerKwd
+varName "cols"
+semiColon
+varName "cols"
+equals
+integerConst "50"
+semiColon
+matrixKwd
+varName "data"
+leftSquare
+varName "rows"
+comma
+varName "cols"
+rightSquare
+varName "i"
+comma
+varName "j"
+equals
+varName "j"
+semiColon
+integerKwd
+varName "season_length"
+semiColon
+varName "season_length"
+equals
+integerConst "7"
+semiColon
+integerKwd
+varName "years"
+semiColon
+varName "years"
+equals
+varName "ceil"
+leftParen
+varName "cols"
+multiply
+floatConst "1.0"
+divide
+varName "season_length"
+rightParen
+semiColon
+matrixKwd
+varName "avgScore"
+leftSquare
+varName "rows"
+comma
+integerConst "1"
+rightSquare
+varName "row"
+comma
+varName "irrelevant"
+equals
+letKwd
+matrixKwd
+varName "pt"
+leftSquare
+varName "years"
+comma
+varName "season_length"
+rightSquare
+varName "i"
+comma
+varName "j"
+equals
+letKwd
+integerKwd
+varName "k"
+semiColon
+varName "k"
+equals
+varName "i"
+multiply
+varName "season_length"
+add
+varName "j"
+semiColon
+inKwd
+ifKwd
+varName "k"
+greaterThanEqual
+varName "cols"
+thenKwd
+floatConst "0.0"
+subtract
+integerConst "25"
+elseKwd
+varName "data"
+leftSquare
+varName "row"
+comma
+varName "k"
+rightSquare
+endKwd
+semiColon
+matrixKwd
+varName "comparisonMatrix"
+leftSquare
+varName "years"
+comma
+varName "years"
+rightSquare
+varName "i"
+comma
+varName "j"
+equals
+ifKwd
+varName "j"
+lessThanEqual
+varName "i"
+thenKwd
+floatConst "0.0"
+elseKwd
+letKwd
+floatKwd
+varName "diff"
+semiColon
+varName "diff"
+equals
+integerConst "0"
+semiColon
+integerKwd
+varName "k"
+semiColon
+forKwd
+leftParen
+varName "k"
+equals
+integerConst "0"
+varName "to"
+varName "season_length"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+varName "diff"
+equals
+varName "diff"
+add
+varName "pt"
+leftSquare
+varName "i"
+comma
+varName "k"
+rightSquare
+subtract
+varName "pt"
+leftSquare
+varName "j"
+comma
+varName "k"
+rightSquare
+semiColon
+rightCurly
+inKwd
+varName "diff"
+divide
+varName "season_length"
+endKwd
+semiColon
+matrixKwd
+varName "modelAvgScore"
+leftSquare
+varName "years"
+comma
+integerConst "1"
+rightSquare
+varName "yr"
+comma
+varName "dontcare"
+equals
+letKwd
+integerKwd
+varName "x"
+semiColon
+integerKwd
+varName "y"
+semiColon
+floatKwd
+varName "score1"
+semiColon
+varName "score1"
+equals
+floatConst "0.0"
+semiColon
+forKwd
+leftParen
+varName "x"
+equals
+integerConst "0"
+varName "to"
+varName "yr"
+rightParen
+leftCurly
+forKwd
+leftParen
+varName "y"
+equals
+varName "yr"
+add
+integerConst "1"
+varName "to"
+varName "years"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+varName "score1"
+equals
+varName "score1"
+add
+varName "comparisonMatrix"
+leftSquare
+varName "x"
+comma
+varName "y"
+rightSquare
+semiColon
+rightCurly
+rightCurly
+varName "score1"
+equals
+varName "score1"
+multiply
+integerConst "2"
+divide
+leftParen
+varName "yr"
+multiply
+leftParen
+varName "years"
+subtract
+varName "yr"
+rightParen
+rightParen
+semiColon
+floatKwd
+varName "score2"
+semiColon
+varName "score2"
+equals
+floatConst "0.0"
+semiColon
+forKwd
+leftParen
+varName "x"
+equals
+integerConst "0"
+varName "to"
+varName "yr"
+rightParen
+leftCurly
+forKwd
+leftParen
+varName "y"
+equals
+integerConst "0"
+varName "to"
+varName "yr"
+rightParen
+leftCurly
+varName "score2"
+equals
+varName "score2"
+add
+varName "comparisonMatrix"
+leftSquare
+varName "x"
+comma
+varName "y"
+rightSquare
+semiColon
+rightCurly
+rightCurly
+varName "score2"
+equals
+varName "score2"
+divide
+leftParen
+leftParen
+varName "yr"
+subtract
+integerConst "1"
+rightParen
+multiply
+varName "yr"
+divide
+integerConst "2"
+rightParen
+semiColon
+floatKwd
+varName "score3"
+semiColon
+varName "score3"
+equals
+floatConst "0.0"
+semiColon
+forKwd
+leftParen
+varName "x"
+equals
+varName "yr"
+add
+integerConst "1"
+varName "to"
+varName "years"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+forKwd
+leftParen
+varName "y"
+equals
+varName "yr"
+add
+integerConst "1"
+varName "to"
+varName "years"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+varName "score3"
+equals
+varName "score3"
+add
+varName "comparisonMatrix"
+leftSquare
+varName "x"
+comma
+varName "y"
+rightSquare
+semiColon
+rightCurly
+rightCurly
+varName "score3"
+equals
+varName "score3"
+divide
+leftParen
+leftParen
+varName "years"
+subtract
+varName "yr"
+rightParen
+multiply
+leftParen
+varName "years"
+subtract
+varName "yr"
+subtract
+integerConst "1"
+rightParen
+divide
+integerConst "2"
+rightParen
+semiColon
+inKwd
+varName "score1"
+subtract
+varName "score2"
+subtract
+varName "score3"
+endKwd
+semiColon
+floatKwd
+varName "maximum"
+semiColon
+varName "maximum"
+equals
+floatConst "0.0"
+subtract
+integerConst "25"
+semiColon
+integerKwd
+varName "k"
+semiColon
+varName "k"
+equals
+integerConst "0"
+semiColon
+forKwd
+leftParen
+varName "k"
+equals
+integerConst "0"
+varName "to"
+varName "years"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+ifKwd
+leftParen
+varName "modelAvgScore"
+leftSquare
+varName "k"
+comma
+integerConst "0"
+rightSquare
+greaterThan
+varName "maximum"
+rightParen
+leftCurly
+varName "maximum"
+equals
+varName "modelAvgScore"
+leftSquare
+varName "k"
+comma
+integerConst "0"
+rightSquare
+semiColon
+rightCurly
+rightCurly
+inKwd
+varName "maximum"
+endKwd
+semiColon
+integerKwd
+varName "j"
+semiColon
+forKwd
+leftParen
+varName "j"
+equals
+integerConst "0"
+varName "to"
+varName "rows"
+subtract
+integerConst "1"
+rightParen
+leftCurly
+varName "print"
+leftParen
+varName "avgScore"
+leftSquare
+varName "j"
+comma
+integerConst "0"
+rightSquare
+rightParen
+semiColon
+varName "print"
+leftParen
+stringConst ""\n""
+rightParen
+semiColon
+rightCurly
+rightCurly

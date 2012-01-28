@@ -1,0 +1,63 @@
+<project name='hello' default='dist' basedir='.'>
+  <description>Build the grammar hello </description>
+
+  <property environment='env'/>
+  <property name='jg' location='/home/cby1990/silver/generated/'/>
+  <property name='sh' location='/home/cby1990/silver/'/>
+  <property name='bin' location='${jg}/bin'/>
+  <property name='src' location='${jg}/src'/>
+
+  <path id='lib.classpath'>
+    <fileset dir='${sh}/jars' includes='SilverRuntime.jar CopperRuntime.jar CopperCompiler.jar' />
+  </path>
+
+  <path id='src.classpath'>
+    <pathelement location='${src}' />
+  </path>
+
+  <path id='compile.classpath'>
+    <path refid='src.classpath'/>
+    <path refid='lib.classpath'/>
+  </path>
+
+  <taskdef name='copper' classname='edu.umn.cs.melt.copper.ant.CopperAntTask' classpathref='lib.classpath'/>
+
+
+  <target name='init'>
+
+    <!-- Create the time stamp -->
+    <tstamp>
+      <format property='TIME' pattern='MM/dd/yyyy hh:mm aa'/>
+    </tstamp>
+
+    <mkdir dir='${bin}'/>
+  </target>
+
+  <target name='dist' depends='grammars'>
+
+    <pathconvert refid='lib.classpath' pathsep=' ' property='man.classpath' />
+    <jar destfile='hello.jar' basedir='${bin}'>
+       <include name='hello/*.class' />
+       <include name='core/*.class' />
+      <manifest>
+       <attribute name='Main-Class' value='hello.Main' />
+       <attribute name='Class-Path' value='${man.classpath}' />
+       <attribute name='Built-By' value='${user.name}' />
+       <attribute name='Implementation-Version' value='${TIME}' />
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name='grammars' depends='init, copper'>
+      <javac debug='on' classpathref='compile.classpath' srcdir='${src}' destdir='${bin}' includeantruntime='false'>
+       <include name='hello/*.java' />
+       <include name='core/*.java' />
+      </javac>
+  </target>
+
+  <target name='copper'>
+  </target>
+
+
+</project>

@@ -1,0 +1,18 @@
+main( ) { 
+Integer rows;
+ rows = 100;
+ Integer cols;
+ cols = 50;
+ if (cols)
+{ 
+cols = 10;
+ rows = 30;
+ 
+}
+else
+{ 
+cols = 30;
+ rows = 10;
+ 
+}
+ } 

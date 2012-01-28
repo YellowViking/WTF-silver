@@ -1,0 +1,74 @@
+main( ) { 
+Matrix data = readMatrix("myData.dat");
+ Integer rows;
+ rows = numRows(data);
+ Integer cols;
+ cols = numCols(data);
+ Integer season_length;
+ season_length = 7;
+ Integer years;
+ years = ceil(((cols  * 1.0)  / season_length));
+ Matrix avgScore [rows , 1 ] row , irrelevant = let Matrix pt [years , season_length ] i , j = let Integer k;
+ k = ((i  * season_length)  + j);
+  in if (k  >= cols) then (0.0  - 25) else r[row,k] end;
+ Matrix comparisonMatrix [years , years ] i , j = if (j  <= i) then 0.0 else let Float diff;
+ diff = 0;
+ Integer k;
+ for (k = 0 to (season_length  - 1)){ 
+diff = ((diff  + i[i,k])  - j[j,k]);
+ 
+}
+  in (diff  / season_length) end;
+ Matrix modelAvgScore [years , 1 ] yr , dontcare = let Integer x;
+ Integer y;
+ Float score1;
+ score1 = 0.0;
+ for (x = 0 to yr){ 
+for (y = (yr  + 1) to (years  - 1)){ 
+score1 = (score1  + x[x,y]);
+ 
+}
+ 
+}
+ score1 = ((score1  * 2)  / (yr  * (years  - yr)));
+ Float score2;
+ score2 = 0.0;
+ for (x = 0 to yr){ 
+for (y = 0 to yr){ 
+score2 = (score2  + x[x,y]);
+ 
+}
+ 
+}
+ score2 = (score2  / (((yr  - 1)  * yr)  / 2));
+ Float score3;
+ score3 = 0.0;
+ for (x = (yr  + 1) to (years  - 1)){ 
+for (y = (yr  + 1) to (years  - 1)){ 
+score3 = (score3  + x[x,y]);
+ 
+}
+ 
+}
+ score3 = (score3  / (((years  - yr)  * ((years  - yr)  - 1))  / 2));
+  in ((score1  - score2)  - score3) end;
+ Float maximum;
+ maximum = (0.0  - 25);
+ Integer k;
+ k = 0;
+ for (k = 0 to (years  - 1)){ 
+if ((k[k,0]  > maximum))
+{ 
+maximum = k[k,0];
+ 
+}
+ 
+}
+  in maximum end;
+ Integer j;
+ for (j = 0 to (rows  - 1)){ 
+print (j[j,0]);
+ print ("\n");
+ 
+}
+ } 

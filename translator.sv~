@@ -1,0 +1,69 @@
+grammar wtf:translator;
+
+{-
+@ref 8.3 Creating a parser from a set of grammar
+-}
+
+import silver:langutil;
+import silver:langutil:pp;
+import concretesyntax;
+import abstractsyntax;
+
+parser parse :: Root {
+  concretesyntax;
+  terminals;
+} 
+
+function main 
+IOVal<Integer> ::= largs::[String] io_in::IO
+{
+  local attribute args :: String;
+  args = implode(" ", largs);
+  
+  production attribute isF :: IOVal<Boolean>;
+  isF = isFile(head(args), io_in);
+
+  production attribute dsl :: IOVal<String>;
+  dsl = readFile(head(largs), isF.io);
+
+  production attribute cppfilename :: IOVal<String>;
+  cppFilename = head(largs) ++ ".cpp";
+
+  local attribute parseResult :: ParseResult<concretesyntax:Root>;
+  parseResult = parse(dsl.iovalue, head(largs));
+
+  local attribute parseTree :: concretesyntax:Root;
+  parseTree = parseResult.parseTree;
+
+  local attribute ast :: abstractsyntax:Root;
+  ast = parseTree.ast;
+
+  local attribute print_success :: IO;
+  print_success = 
+    print( "Command line arguments: " ++ args ++
+           "Errors: " ++
+           (if null(ast.errors)  then cppFilename ++ " generated!\n" 
+            else "\n" ++
+                 implode("", ppMessages(ast.errors)) ++ "\n"
+           )
+           , text.io );
+
+  local attribute write_success :: IO;
+  write_success =
+    writeFile ( cppFilename, ast.abstractsyntax:cppCode, print_success );
+
+  local attribute print_failure :: IO;
+  print_failure =
+    print("Encountered a parse error:\n" ++ parseResult.parseErrors ++ "\n", text.io);
+
+  local attribute ioResult :: IO;
+  ioResult =
+         if   ! isF.iovalue 
+         then error ("\n\nFile \"" ++ args ++ "\" not found.\n")
+         else
+         if   parseResult.parseSuccess 
+         then write_success 
+         else print_failure;
+  return ioval(ioResult, 0);
+}
+
