@@ -1,0 +1,103 @@
+1. UnitTest:
+
+Sample Output ->
+
+cby1990@ubuntu:/mnt/hgfs/Projects-3/WTFSilverUnitTest/src$ python run-tests.py 
+TestSuite Starting ...
+Changing path to => /home/cby1990/silver/wtf!?
+Compiling Grammar: translator
+	[/home/cby1990/silver/generated/src/translator/Silver.svi]
+Compiling Grammar: core
+	[/home/cby1990/silver/generated/src/core/Silver.svi]
+Compiling Grammar: silver:langutil
+	[/home/cby1990/silver/generated/src/silver/langutil/Silver.svi]
+Compiling Grammar: silver:langutil:pp
+	[/home/cby1990/silver/generated/src/silver/langutil/pp/Silver.svi]
+Compiling Grammar: silver:util:deque
+	[/home/cby1990/silver/generated/src/silver/util/deque/Silver.svi]
+Compiling Grammar: AST
+	[/home/cby1990/silver/generated/src/AST/Silver.svi]
+Compiling Grammar: wtfParser
+	[/home/cby1990/silver/generated/src/wtfParser/Silver.svi]
+Compiling Grammar: scanner
+	[/home/cby1990/silver/generated/src/scanner/Silver.svi]
+
+Grammar 'translator' is up to date. Use --clean to force a recompile.
+
+Command line arguments: samples/simple_5.dsl
+samples/simple_5.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/simple_5.dsl.out ...done.
+checking expected data from [samples/simple_5.expected]
+OK.
+Command line arguments: samples/simple_7.dsl
+samples/simple_7.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/simple_7.dsl.out ...done.
+checking expected data from [samples/simple_7.expected]
+OK.
+Command line arguments: samples/simple_4.dsl
+samples/simple_4.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/simple_4.dsl.out ...done.
+checking expected data from [samples/simple_4.expected]
+OK.
+Command line arguments: samples/simple_6.dsl
+samples/simple_6.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/simple_6.dsl.out ...done.
+checking expected data from [samples/simple_6.expected]
+OK.
+Command line arguments: samples/my_code_1.dsl
+samples/my_code_1.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/my_code_1.dsl.out ...done.
+OK.
+Command line arguments: samples/simple_8.dsl
+samples/simple_8.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/simple_8.dsl.out ...done.
+checking expected data from [samples/simple_8.expected]
+OK.
+Command line arguments: samples/forest_loss_v2.dsl
+samples/forest_loss_v2.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/forest_loss_v2.dsl.out ...done.
+checking expected data from [samples/forest_loss_v2.expected]
+Test Failed on case [samples/forest_loss_v2.dsl]:failed to match expected data, output is written to => samples/forest_loss_v2.dsl.output
+Failed.
+Command line arguments: samples/my_code_2.dsl
+samples/my_code_2.dsl.cpp generated!
+running /home/cby1990/silver/wtf!?/samples/my_code_2.dsl.out ...done.
+OK.
+Test 8 cases done.
+7 of cases passed
+1 of cases failed
+Success rate 87.000000%
+
+
+2.Directories:
+
+They are layouted what we had for our cpp's Iterations. Naming conventions for the silver-code are followed by provided files (parser.cpp, translator.cpp, etc) as possibly as I can.
+
+
+3.Puzzles:
+
+i.terminal Else  'else'  lexer classes { KEYWORDS }, precedence = 4; <---------------- why do we need to specify precedence = 4? otherwise it will result in unresolvable table.
+
+ii.
+
+concrete productions d::Decl
+ | te::TypeExpr id::Id ';'  { d.ast = decl(te.ast, name(id)); }
+ | te::TypeExpr id::Id '=' src::Expr ';'  { d.ast = declAssignment(te.ast, name(id), src.ast); }
+ | 'Matrix' id::Id '=' src::Expr ';'  { d.ast = declAssignment(typeExprMatrix(), name(id), src.ast); }         <-------------------- a.
+ | 'Matrix' id::Id '[' r::Expr ',' c::Expr ']' 
+            ri::Id ',' ci::Id '=' e::Expr ';'  { d.ast = declMatrix(name(id), r.ast, c.ast, name(ri), name(ci), e.ast); }
+
+{--
+ - A concrete expression denoting a type
+ -}
+nonterminal TypeExpr with ast<TypeExpr>;
+
+concrete productions t::TypeExpr
+ | 'Integer'  { t.ast = typeExprInteger(); }
+ | 'Float'    { t.ast = typeExprFloat(); }
+ | 'Boolean'  { t.ast = typeExprBoolean(); }
+ | 'String'   { t.ast = typeExprString(); }
+-- | 'Matrix'   { t.ast = typeExprMatrix(); }        <------------------- b.
+
+
+a. is a walkaround for b., it's awkward since Matrix should be considered as one of the TypeExpr. Uncomment b. and comment a. will result in conflicting table.
