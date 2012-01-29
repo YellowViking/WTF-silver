@@ -37,13 +37,13 @@
 
     <pathconvert refid='lib.classpath' pathsep=' ' property='man.classpath' />
     <jar destfile='translator.jar' basedir='${bin}'>
+       <include name='AST/*.class' />
        <include name='translator/*.class' />
+       <include name='wtfParser/*.class' />
        <include name='core/*.class' />
        <include name='silver/langutil/*.class' />
        <include name='silver/langutil/pp/*.class' />
        <include name='silver/util/deque/*.class' />
-       <include name='AST/*.class' />
-       <include name='wtfParser/*.class' />
        <include name='scanner/*.class' />
       <manifest>
        <attribute name='Main-Class' value='translator.Main' />
@@ -57,19 +57,18 @@
 
   <target name='grammars' depends='init, copper'>
       <javac debug='on' classpathref='compile.classpath' srcdir='${src}' destdir='${bin}' includeantruntime='false'>
+       <include name='AST/*.java' />
        <include name='translator/*.java' />
+       <include name='wtfParser/*.java' />
        <include name='core/*.java' />
        <include name='silver/langutil/*.java' />
        <include name='silver/langutil/pp/*.java' />
        <include name='silver/util/deque/*.java' />
-       <include name='AST/*.java' />
-       <include name='wtfParser/*.java' />
        <include name='scanner/*.java' />
       </javac>
   </target>
 
   <target name='copper'>
-    <copper fullClassName='translator.Parser_translator_parse' inputFile='${src}/translator/Parser_translator_parse.copper' outputFile='${src}/translator/Parser_translator_parse.java' skin='OLD_XML' warnUselessNTs='no' dump='true' dumpType='HTML' dumpOnlyOnError='true' dumpFile='Parser_translator_parse.copperdump.html'/>
   </target>
 
 

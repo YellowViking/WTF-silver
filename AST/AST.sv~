@@ -9,6 +9,9 @@ imports silver:langutil;
 synthesized attribute cppCode :: String
   occurs on Root, Stmt, Decl, Expr, TypeExpr;
 
+autocopy attribute indentLevel :: Integer
+  occurs on Root, Stmt, Expr, Decl;
+
 nonterminal Name with name;
 synthesized attribute name :: String;
 
@@ -17,16 +20,25 @@ n::Name ::= l::Location s::String
 {
   n.name = s;
 }
+
+function indentString 
+String ::= l::Integer
+{
+  return if l == 0 
+  then ""
+  else "  " ++ indentString(l - 1);
+}
 ---------------------------------------------------------------------------
 -- Root, aspect over the production in Root.sv
 abstract production rootStmt
 r::Root ::= s::Stmt
 {
   r.errors := [];
+  s.indentLevel = 1;
   r.cppCode = "#include \"Runtime.h\"\n\n" ++
-             "int main() {\n " ++
+             "int main() {\n" ++
              s.cppCode ++
-             "}\n\n";
+             "\n" ++ indentString(s.indentLevel) ++ "return 0;\n}\n\n";
 }
 
 ---------------------------------------------------------------------------
@@ -40,7 +52,8 @@ s::Stmt ::= d::Decl
 abstract production block
 s::Stmt ::= body::Stmt 
 {
-  s.cppCode = "{\n" ++ body.cppCode ++ "}\n";
+  body.indentLevel = s.indentLevel + 1; 
+  s.cppCode = "{\n" ++ body.cppCode ++ indentString(s.indentLevel) ++ "}\n";
 }
 
 abstract production seq
@@ -52,7 +65,7 @@ s::Stmt ::= s1::Stmt s2::Stmt
 abstract production printStmt
 s::Stmt ::= e::Expr 
 {
-  s.cppCode = "print (" ++ e.cppCode ++ "); \n";
+  s.cppCode = indentString(s.indentLevel) ++ "print (" ++ e.cppCode ++ "); \n";
 }
 
 abstract production skip
@@ -64,33 +77,33 @@ s::Stmt ::=
 abstract production ifthen
 s::Stmt ::= c::Expr t::Stmt 
 {
-  s.cppCode = "if ( " ++ c.cppCode ++ " )\n" ++ t.cppCode;
+  s.cppCode = indentString(s.indentLevel) ++ "if ( " ++ c.cppCode ++ " )" ++ t.cppCode;
 }
 
 abstract production ifelse
 s::Stmt ::= c::Expr t::Stmt e::Stmt 
 {
-  s.cppCode = "if ( " ++ c.cppCode ++ " )\n" ++ t.cppCode ++ 
-             "else \n" ++ e.cppCode;
+  s.cppCode = indentString(s.indentLevel) ++ "if ( " ++ c.cppCode ++ " )" ++ t.cppCode ++ 
+             "else " ++ e.cppCode;
 }
 
 abstract production assignment
 s::Stmt ::= id::Name e::Expr 
 {
-  s.cppCode = id.name ++ " = " ++ e.cppCode ++ "; \n";
+  s.cppCode = indentString(s.indentLevel) ++ id.name ++ " = " ++ e.cppCode ++ "; \n";
 }
 
 abstract production for
 s::Stmt ::= i::Name lower::Expr upper::Expr body::Stmt
 { 
   s.cppCode = 
-   "for(int " ++ i.name ++ " = " ++ lower.cppCode ++ ";" ++ i.name ++ " <= " ++ upper.cppCode ++ ";" ++ i.name ++ " += 1)" ++ body.cppCode;
+   indentString(s.indentLevel) ++ "for(int " ++ i.name ++ " = " ++ lower.cppCode ++ "; " ++ i.name ++ " <= " ++ upper.cppCode ++ "; " ++ i.name ++ " += 1) " ++ body.cppCode;
 }
 
 abstract production assignmentMatrix
 s::Stmt ::= id::Name r::Expr c::Expr e::Expr 
 {
-  s.cppCode = id.name ++ "[Index2D(" ++ r.cppCode ++ ", " ++ c.cppCode ++ ")] = " ++ e.cppCode ++ ";\n";
+  s.cppCode = indentString(s.indentLevel) ++ id.name ++ "[Index2D(" ++ r.cppCode ++ ", " ++ c.cppCode ++ ")] = " ++ e.cppCode ++ ";\n";
 }
 
 abstract production matrixRef
@@ -103,24 +116,25 @@ e::Expr ::= id::Name r::Expr c::Expr
 abstract production decl
 d::Decl ::= t::TypeExpr id::Name 
 {
-  d.cppCode = t.cppCode ++ " " ++ id.name ++ "; \n";
+  d.cppCode = indentString(d.indentLevel) ++ t.cppCode ++ " " ++ id.name ++ "; \n";
 }
 
 abstract production declMatrix
 d::Decl ::= id::Name r::Expr c::Expr ri::Name ci::Name v::Expr
 {
+  v.indentLevel = d.indentLevel + 2;
   d.cppCode = 
-   "Matrix<Float> " ++ id.name ++ "(" ++ r.cppCode ++ "," ++ c.cppCode ++ ");\n" ++
-   "for(int " ++ ri.name ++ " = 0; " ++ ri.name ++ " < " ++ r.cppCode ++ "; " ++ ri.name ++ "++) {\n" ++
-   " for(int " ++ ci.name ++ " = 0; " ++ ci.name ++ " < " ++ c.cppCode ++ "; " ++ ci.name ++ "++) {\n" ++
-   "  " ++ id.name ++ "[Index2D(" ++ ri.name ++ "," ++ ci.name ++ ")] = " ++ v.cppCode ++ ";\n" ++
-   " }\n" ++
-   "}\n";
+   indentString(d.indentLevel    ) ++ "Matrix<Float> " ++ id.name ++ "(" ++ r.cppCode ++ "," ++ c.cppCode ++ ");\n" ++
+   indentString(d.indentLevel    ) ++ "for(int " ++ ri.name ++ " = 0; " ++ ri.name ++ " < " ++ r.cppCode ++ "; " ++ ri.name ++ "++) {\n" ++
+   indentString(d.indentLevel + 1) ++ "for(int " ++ ci.name ++ " = 0; " ++ ci.name ++ " < " ++ c.cppCode ++ "; " ++ ci.name ++ "++) {\n" ++
+   indentString(d.indentLevel + 2) ++ id.name ++ "[Index2D(" ++ ri.name ++ "," ++ ci.name ++ ")] = " ++ v.cppCode ++ ";\n" ++
+   indentString(d.indentLevel + 1) ++ "}\n" ++
+   indentString(d.indentLevel    ) ++ "}\n";
 }
 abstract production declAssignment
 d::Decl ::= te::TypeExpr id::Name src::Expr
 {
-  d.cppCode = te.cppCode ++ " " ++ id.name ++ " = " ++ src.cppCode ++ "; \n";
+  d.cppCode = indentString(d.indentLevel) ++ te.cppCode ++ " " ++ id.name ++ " = " ++ src.cppCode ++ "; \n";
 }
 
 abstract production typeExprInteger
@@ -171,7 +185,8 @@ e::Expr ::= c::Expr t::Expr e1::Expr
 abstract production letExpr
 e::Expr ::= s::Stmt e1::Expr
 {
-  e.cppCode = "({" ++ s.cppCode ++ e1.cppCode ++ ";})";
+  s.indentLevel = e.indentLevel + 1;
+  e.cppCode = "({\n" ++ s.cppCode ++ indentString(s.indentLevel) ++ e1.cppCode ++ ";\n" ++ indentString(s.indentLevel) ++ "})";
 }
 
 abstract production intLit
